@@ -2,6 +2,11 @@
 
 Social media platforms are among the richest and most current sources of unstructured text data. NetworkLens is a Python-based CLI tool that collects posts from the Bluesky API and analyses keyword co-occurrence to build semantic networks. Using graph theory, it maps relationships between keywords, detects thematic communities, and computes network metrics — making it useful for researchers, analysts, and investigators studying trends, discourse patterns, or misinformation in online text.
 
+<p>
+  <img src="keyword_network_circular.png" height="400px" />
+  <img src="network_metrics.png" height="400px" />
+</p>
+
 ## Use Cases
 
 - **Semantic Mapping**: Reveals associations between keywords through co-occurrence analysis, surfacing emerging topics or narrative clusters.
