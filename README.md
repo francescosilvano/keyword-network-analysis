@@ -1,93 +1,118 @@
 # NetworkLens
 
-Social media platforms are among the richest and most current sources of unstructured text data. NetworkLens is a Python-based CLI tool that collects posts from the Bluesky API and analyses keyword co-occurrence to build semantic networks. Using graph theory, it maps relationships between keywords, detects thematic communities, and computes network metrics — making it useful for researchers, analysts, and investigators studying trends, discourse patterns, or misinformation in online text.
+A command-line tool for constructing and analysing keyword co-occurrence networks from Bluesky post data, using methods from graph theory and complex network analysis.
 
-<p>
-  <img src="keyword_network_circular.png" height="400px" />
-  <img src="network_metrics.png" height="400px" />
-</p>
+![Circular network layout](keyword_network_circular.png) ![Network metrics](network_metrics.png)
 
-## Use Cases
+## 1. Overview
 
-- **Semantic Mapping**: Reveals associations between keywords through co-occurrence analysis, surfacing emerging topics or narrative clusters.
-- **Network Metrics**: Computes degree centrality, betweenness, and community structures for quantitative analysis of keyword dynamics.
-- **Visualization**: Generates graphs and metric charts suitable for reports or exploratory analysis.
-- **Reproducibility**: Docker support ensures consistent environments; automated archiving maintains versioned, indexed run histories.
+Social media platforms constitute a high-volume source of unstructured textual data suitable for the empirical study of discourse, topic emergence, and information diffusion. NetworkLens addresses the problem of extracting structured relational information from such data by modelling keyword co-occurrence as a graph: nodes represent keywords, and edges represent their joint occurrence within a defined unit of text (e.g., a post).
 
-## Features
+This construction reduces the analysis of textual corpora to the analysis of network topology, permitting the application of established graph-theoretic measures — degree centrality, betweenness centrality, community structure — to questions that are otherwise addressed through purely qualitative or frequency-based text analysis. The intended audience is researchers, analysts, and practitioners investigating thematic clustering, narrative structure, or the spread of specific terminology in online text corpora.
 
-- Bluesky post collection via API with keyword filtering
-- Co-occurrence graph construction using NetworkX
-- Local (node-level) and global network metric computation
-- Community detection via the Louvain algorithm
-- Visualizations: spring and circular layouts, metric histograms, optional sentiment distributions
-- Multi-mode analysis: full keyword sets, main-only, or extended groups
-- UUID-timestamped run archiving with metadata indexing
-- Export formats: CSV, GraphML (Gephi/Cytoscape), PNG, XLSX matrices
+## 2. Methodological Approach
 
+The pipeline consists of four stages:
 
-## Installation
+1. **Data acquisition** — Posts are retrieved from the Bluesky AT Protocol API, filtered by a configurable keyword set.
+2. **Graph construction** — Co-occurrence relations between keywords are computed and represented as an undirected graph using NetworkX.
+3. **Structural analysis** — Local (node-level) and global (graph-level) metrics are computed, and community detection is performed via the Louvain modularity-optimisation algorithm.
+4. **Output generation** — Results are rendered as visualisations (spring and circular layouts, metric distributions, optional sentiment distributions) and exported in formats suitable for further analysis or archival.
 
-### Prerequisites
-- Requires Python 3.11 or higher (due to dependencies compatibility).
-- Bluesky account credentials for API access.
+### Analytical capabilities
 
-### Option 1: Docker (Recommended)
-1. Clone the repo: `git clone https://github.com/francescosilvano/networklens.git`
-2. Create `.env` file with:
-   ```
-   BLUESKY_HANDLE=your.handle.bsky.social
-   BLUESKY_PASSWORD=your-password
-   ```
-3. Build and run: `docker compose up --build`
-   - Outputs saved in `exports/`.
+- Semantic mapping of keyword associations via co-occurrence analysis, for the identification of emergent topics and narrative clusters.
+- Quantitative characterisation of network structure through degree centrality, betweenness centrality, and community-membership statistics.
+- Multi-mode analysis, supporting evaluation over the full keyword set, a restricted "main" subset, or extended thematic groupings.
+- Deterministic, versioned run archiving: each execution is assigned a UUID-timestamped directory with accompanying metadata, supporting reproducibility of results.
+- Export to CSV, GraphML (compatible with Gephi and Cytoscape), PNG, and XLSX adjacency-matrix formats.
 
-### Option 2: Local Setup
-1. Clone the repo and navigate to it.
-2. Create virtual environment: `python -m venv venv && source venv/bin/activate` (Unix) or `venv\Scripts\activate` (Windows).
-3. Install the package (recommended): `pip install -e .` or `pip install .`
-4. Add `.env` (BLUESKY_HANDLE, BLUESKY_PASSWORD) to the project root.
-5. Run the CLI: `networklens`
+## 3. Installation
 
+### 3.1 Prerequisites
 
-## Dependencies
+- Python ≥ 3.11 (required for dependency compatibility).
+- A registered Bluesky account, for API authentication.
 
-Core dependencies are installed automatically via pip:
+### 3.2 Containerised Deployment (recommended)
 
-- **atproto** - Bluesky AT Protocol client for post collection
-- **textblob** - Sentiment analysis
-- **pandas** - Data manipulation and CSV export
-- **matplotlib** - Graph and histogram visualisation
-- **networkx** - Co-occurrence graph construction and metric computation
-- **python-dotenv** - Environment variable management
-- **openpyxl** - XLSX matrix export
+Containerised deployment is recommended for reproducibility, as it removes variation introduced by host-level dependency versions.
 
-For development (linting, testing, and building):
+```bash
+git clone https://github.com/francescosilvano/networklens.git
+cd networklens
+```
+
+Create a `.env` file in the project root containing the following credentials:
+
+```
+BLUESKY_HANDLE=your.handle.bsky.social
+BLUESKY_PASSWORD=your-password
+```
+
+Build and execute the container:
+
+```bash
+docker compose up --build
+```
+
+Output artefacts are written to `exports/`.
+
+### 3.3 Local Installation
+
+```bash
+git clone https://github.com/francescosilvano/networklens.git
+cd networklens
+python -m venv venv
+source venv/bin/activate    # Unix
+venv\Scripts\activate       # Windows
+pip install -e .            # or: pip install .
+```
+
+Populate `.env` with `BLUESKY_HANDLE` and `BLUESKY_PASSWORD` as above, then invoke the CLI:
+
+```bash
+networklens
+```
+
+## 4. Dependencies
+
+Core dependencies are resolved automatically via pip and declared in `pyproject.toml`:
+
+| Package | Function |
+|---|---|
+| `atproto` | Bluesky AT Protocol client, used for post retrieval |
+| `networkx` | Graph construction and metric computation |
+| `pandas` | Data manipulation and CSV export |
+| `matplotlib` | Rendering of graphs and metric distributions |
+| `textblob` | Sentiment analysis (optional) |
+| `openpyxl` | Export of adjacency data to XLSX |
+| `python-dotenv` | Environment-variable management |
+
+Development dependencies (`pylint`, `pytest`, `build`) are installed via:
 
 ```bash
 pip install networklens[dev]
 ```
 
-This installs `pylint`, `pytest`, and `build` in addition to the core dependencies.
+## 5. Usage
 
-**Dependencies** are declared in `pyproject.toml` and will be installed by pip.
+Analysis parameters — keyword lists, fetch limits, and related configuration — are defined in `networklens/config.py`. Invoking the CLI executes the full pipeline: data collection, graph construction, and output generation, writing results to `exports/runs/<timestamp_uuid>/`.
 
-## Usage
-Configure parameters in `networklens/config.py` (e.g., keywords, fetch limits). Run the CLI to collect data, build graphs, and generate outputs in `exports/runs/<timestamp_uuid>/`.
+The configuration supports variation in fetch period, keyword composition, and inclusion of sentiment analysis. Multiple configurations may be run in parallel for comparative analysis across parameter sets. Resulting GraphML files may be loaded into external network-analysis software for interactive exploration; CSV outputs support direct quantitative analysis of computed metrics.
 
-The tool supports customization of fetch periods, keyword lists, and optional sentiment analysis for deeper insights, while also allowing parallel configurations to run multiple analyses simultaneously for comparative purposes. Outputs can be explored interactively by loading GraphML files into external tools, or reviewed quantitatively through the exported CSV metrics.
+## 6. Limitations
 
-## Limitations
-- Currently Bluesky-focused; extendable to other APIs (e.g., X/Twitter) with modifications;
-- No built-in multilingual support or advanced NLP (e.g., embeddings);
-- No parallel executions, compressed exports, searchable run indexes.
+- The data source is currently restricted to Bluesky; extension to other platforms (e.g., X/Twitter) would require modification of the acquisition module.
+- No multilingual support or advanced NLP methods (e.g., embedding-based semantic similarity) are implemented; keyword matching is used as the basis for co-occurrence.
+- Parallel execution, compressed export formats, and searchable indexing of run history are not currently supported.
 
-## Contributors
+## 7. Provenance and Contributors
 
-This project began as part of the Complex Systems course at the University of Siena in the 2025/26 academic year. [Francesco Silvano](https://github.com/francescosilvano)is the primary author and maintainer, and [Raphael](https://github.com/RaphaelNoah)  provided substantial contributions, particularly in refining the codebase to improve the accuracy and reliability of the data processing and results.
+This project originated within the Complex Systems course at the University of Siena, academic year 2025/26. [Francesco Silvano](https://github.com/francescosilvano) is the primary author and maintainer. [Raphael](https://github.com/RaphaelNoah) contributed substantially to the refinement of the data-processing pipeline, improving the accuracy and reliability of computed results.
 
-This work is the result of a joint project to explore and implement concepts from complex systems theory within an academic context.
+The work represents an application of concepts from complex systems theory to the empirical analysis of social media text.
 
-## License
+## 8. License
 
-This work is distributed under the MIT License. 
+Distributed under the MIT License. See `LICENSE` for full terms.
