@@ -1,4 +1,4 @@
-# NetworkLens
+# Graphlex 
 
 A command-line tool for constructing and analysing keyword co-occurrence networks from Bluesky post data, using methods from graph theory and complex network analysis.
 
@@ -6,7 +6,7 @@ A command-line tool for constructing and analysing keyword co-occurrence network
 
 ## 1. Overview
 
-Social media platforms constitute a high-volume source of unstructured textual data suitable for the empirical study of discourse, topic emergence, and information diffusion. NetworkLens addresses the problem of extracting structured relational information from such data by modelling keyword co-occurrence as a graph: nodes represent keywords, and edges represent their joint occurrence within a defined unit of text (e.g., a post).
+Social media platforms constitute a high-volume source of unstructured textual data suitable for the empirical study of discourse, topic emergence, and information diffusion. Graphlex  addresses the problem of extracting structured relational information from such data by modelling keyword co-occurrence as a graph: nodes represent keywords, and edges represent their joint occurrence within a defined unit of text (e.g., a post).
 
 This construction reduces the analysis of textual corpora to the analysis of network topology, permitting the application of established graph-theoretic measures — degree centrality, betweenness centrality, community structure — to questions that are otherwise addressed through purely qualitative or frequency-based text analysis. The intended audience is researchers, analysts, and practitioners investigating thematic clustering, narrative structure, or the spread of specific terminology in online text corpora.
 
@@ -39,8 +39,8 @@ The pipeline consists of four stages:
 Containerised deployment is recommended for reproducibility, as it removes variation introduced by host-level dependency versions.
 
 ```bash
-git clone https://github.com/francescosilvano/networklens.git
-cd networklens
+git clone https://github.com/francescosilvano/graphlex.git
+cd graphlex
 ```
 
 Create a `.env` file in the project root containing the following credentials:
@@ -61,8 +61,8 @@ Output artefacts are written to `exports/`.
 ### 3.3 Local Installation
 
 ```bash
-git clone https://github.com/francescosilvano/networklens.git
-cd networklens
+git clone https://github.com/francescosilvano/graphlex.git
+cd graphlex
 python -m venv venv
 source venv/bin/activate    # Unix
 venv\Scripts\activate       # Windows
@@ -72,7 +72,7 @@ pip install -e .            # or: pip install .
 Populate `.env` with `BLUESKY_HANDLE` and `BLUESKY_PASSWORD` as above, then invoke the CLI:
 
 ```bash
-networklens
+graphlex
 ```
 
 ## 4. Dependencies
@@ -92,12 +92,12 @@ Core dependencies are resolved automatically via pip and declared in `pyproject.
 Development dependencies (`pylint`, `pytest`, `build`) are installed via:
 
 ```bash
-pip install networklens[dev]
+pip install graphlex[dev]
 ```
 
 ## 5. Usage
 
-Analysis parameters — keyword lists, fetch limits, and related configuration — are defined in `networklens/config.py`. Invoking the CLI executes the full pipeline: data collection, graph construction, and output generation, writing results to `exports/runs/<timestamp_uuid>/`.
+Analysis parameters — keyword lists, fetch limits, and related configuration — are defined in `graphlex/config.py`. Invoking the CLI executes the full pipeline: data collection, graph construction, and output generation, writing results to `exports/runs/<timestamp_uuid>/`.
 
 The configuration supports variation in fetch period, keyword composition, and inclusion of sentiment analysis. Multiple configurations may be run in parallel for comparative analysis across parameter sets. Resulting GraphML files may be loaded into external network-analysis software for interactive exploration; CSV outputs support direct quantitative analysis of computed metrics.
 
